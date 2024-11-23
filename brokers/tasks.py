@@ -1,22 +1,14 @@
-
 from brokers.kafka_broker import broker
+from models.models import UserModel
+
 
 # Обработка задачи (subscriber)
 @broker.subscriber("task-topic")
-async def process_task(message: str):
-    # print(f"Processing task: {message}")
-    return {"message": message}
+async def process_task(user: UserModel):
+    print(f"Processing for user: {user.name}")
+    return {"user": user}
+
 
 # Отправка задачи (publisher)
-@broker.subscriber("task-topic")
-async def send_task(message: str):
-    await broker.publish(message, topic="task-topic")
-
-
-# publisher = broker.publisher("task-topic-2")
-
-# @broker.publisher("task-topic")
-# @broker.subscriber("task-topic", group_id="my-unique-group")
-# async def send_task(message: str) -> str:
-#     return message
-
+async def send_task(user: UserModel):
+    await broker.publish(user, topic="task-topic")
